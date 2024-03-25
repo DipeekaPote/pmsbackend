@@ -95,6 +95,7 @@ const updatePipeline = async (req, res) => {
     }
 };
 
+
 module.exports = {
     getPipelines,
     getPipeline,

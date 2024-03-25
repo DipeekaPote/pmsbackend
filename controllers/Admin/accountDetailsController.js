@@ -13,9 +13,9 @@ const mongoose = require("mongoose");
 const getAccounts = async (req, res) => {
     try {
         const accounts = await Account.find({})
-        .populate({ path: 'tags', model: 'tag' })
-        .populate({path:'teamMembers', model:'User'})
-        .populate({path:'contacts', model:'contact'});
+            .populate({ path: 'tags', model: 'tag' })
+            .populate({ path: 'teamMembers', model: 'User' })
+            .populate({ path: 'contacts', model: 'contact' });
         //sort({ createdAt: -1 });
         res.status(200).json({ message: "Accounts retrieved successfully", accounts })
 
@@ -61,7 +61,6 @@ const storage = multer.diskStorage({
             // Create the folder if it doesn't exist
             if (!fs.existsSync(folderPath)) {
                 fs.mkdirSync(folderPath);
-
             }
             cb(null, folderPath);
             // console.log(folderPath)
@@ -81,7 +80,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
-
 // POST a new account
 const createAccount = async (req, res) => {
     try {
@@ -99,14 +97,12 @@ const createAccount = async (req, res) => {
         }
 
         // Create folder based on newAccount._id
-        const accountIdFolder = `uploads/${newAccount._id}`;
+        const accountIdFolder = `uploads/AccountsData/${newAccount._id}`;
         if (!fs.existsSync(accountIdFolder)) {
             fs.mkdirSync(accountIdFolder, { recursive: true });
-
         }
 
-
-        res.status(200).json({
+         res.status(200).json({
             message: "Account created successfully",
             newAccount,
             newCompanyAccount: newCompanyAccount ? {

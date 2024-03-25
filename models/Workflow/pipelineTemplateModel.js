@@ -10,9 +10,10 @@ const stageSchema = new mongoose.Schema({
   conditions: {
     type: String, // This can be of any type depending on your specific requirements
   },
-  automations: {
-    type: String, // This can be of any type depending on your specific requirements
-  },
+  automations: [{
+    type: Array,
+    type: mongoose.Schema.Types.ObjectId, ref: 'Automations',
+  }],
   automove:{
     type: Boolean, 
   }
@@ -32,11 +33,12 @@ const pipelineSchema = new mongoose.Schema(
       required: [true, 'Available to are required'],
      }],
 
-     sortjobsby: [{
-      type: Array,
-      enum: ["Time in stage, oldest first"],
-      required: [true, 'Available to are required'],
-     }],
+     sortjobsby: {
+  
+      type: mongoose.Schema.Types.ObjectId, ref: 'SortJobsBy',
+    
+     
+     },
 
     accountId: {
      type: Boolean,

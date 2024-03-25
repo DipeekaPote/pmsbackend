@@ -1,5 +1,8 @@
 const express = require('express')
 const router = express.Router()
+const multer = require("multer");
+const path = require('path');
+const fs = require('fs');
 
 const { createRole, getRoles, getRole, deleteRole, updateRole } = require('../../controllers/Common/roleControler')
 const { createTag, getTag, getTags, deleteTag, updateTag } = require('../../controllers/Common/tagController')
@@ -9,7 +12,9 @@ const { createUser, getUsers, getUser, deleteUser, updateUser, adminSignup, getU
 const { validateToken } = require("../../controllers/middlewares/authJwt");
 const { generatetoken } = require("../../controllers/Common/loginController");
 const { adminLogin } = require("../../controllers/Common/loginController");
-
+const { createFolderTemplate, getFolders, getFolder, deleteFolderTemplate, updateFolderTemplate,deleteFile, downloadfile, deleteFolder, downloadfolder, getFolderStructure, createfolder,defaultfolderStructure } = require("../../controllers/Common/folderTemplateController");
+const { createSortJobsBy,  getSortJobsBy,  getSortJobBy,  deleteSortJobsBy,  updateSortJobsBy} = require("../../controllers/Common/sortJobsByController")
+const { getAutomations,  getAutomation,  createAutomation,  deleteAutomation,  updateAutomation} = require("../../controllers/Common/automationsController")
 
 //*******************ROLES START********************* */
 //GET all roles 
@@ -36,6 +41,7 @@ router.patch('/role/:id',updateRole)
 
 //*******************USER START********************* */
 //todo JWT token generate
+
 router.post("/login/generatetoken", generatetoken);
 
 //todo  JWT token Verify
@@ -96,7 +102,6 @@ router.post("/updateUserLoginStatus", updateLoginStatus);
 router.get('/resetpassword/verifytoken', validateToken, (req, res) => {
     res.json({ message: 'Access granted', user: req.user });
 });
-
 
 //PATCH UPDATE a User
 
@@ -179,6 +184,157 @@ router.delete('/contact/:id', deleteContact)
 router.patch('/contact/:id', updateContact)
 
 //*******************CONTACT END********************* */
+
+
+
+//*******************Folders START********************* */
+
+const storage = multer.diskStorage({
+
+      destination: (req, file, cb) => {
+      const folder = req.body.folder; // Get the folder from the request parameters
+
+      console.log(req.body.folder);
+
+      const uploadPath = path.join("uploads", req.body.folder);
+
+      console.log(uploadPath);
+
+      fs.mkdir(uploadPath, { recursive: true }, (err) => {
+        if (err) {
+          cb(err, null);
+        } else {
+          cb(null, uploadPath);
+        }
+      });
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + "-" + file.originalname);
+    },
+  });
+  
+  const upload = multer({ storage: storage });
+
+  //const uploadfolder = multer({ storage: storage }).array('file');
+
+//GET all Folders 
+
+router.get('/folder', getFolders)
+
+//POST a new Folder
+
+router.post('/folder', createFolderTemplate)
+
+//GET single Folder 
+
+router.get('/folder/:id', getFolder)
+    
+// Handle file uploads to a specific folder
+router.post("/upload/file/", upload.single("file"), (req, res) => {
+    res.send("File uploaded successfully!");
+});
+
+// Handle file uploads to a specific folder
+router.post("/upload/folder/", upload.single("folder"), (req, res) => {
+  res.send("Folder uploaded successfully!");
+});
+
+
+// // Handle folder uploads to a specific folder
+// router.post("/upload/folder", (req, res) => {
+//     uploadfolder(req, res, (err) => {
+//         if (err) {
+//           return res.status(500).send("Error uploading files: " + err);
+//         }
+//     res.send("File uploaded successfully!");
+// });
+
+// });
+
+//delete single file 
+
+router.delete('/deleteFile/File', deleteFile)
+
+//delete single Folder 
+
+router.delete('/deleteFolder', deleteFolder)
+
+// download file
+router.get("/download/:folder/:filename", downloadfile)
+
+// download folder
+router.get("/download/:folder", downloadfolder)
+
+
+// delete Folder Template
+router.delete("/folder/:id", deleteFolderTemplate)
+
+//  update Folder Template
+router.patch("/folder/:id", updateFolderTemplate)
+
+//  getFolderStructure 
+router.get('/folder-structure/:folderTemplateId', getFolderStructure);
+
+//get defaultfolderstructure
+router.get('/folder-structure', defaultfolderStructure);
+
+//POST a new Folder
+
+router.post('/folder/createfolder', createfolder)
+
+//*******************Folders END********************* */
+
+
+
+//*******************Sory Jobs By START********************* */
+
+//GET all sortjobby 
+
+router.get('/sortjobby', getSortJobsBy)
+
+//GET single sortjobby 
+
+router.get('/sortjobby/:id', getSortJobBy)
+
+//POST a new sortjobby
+
+router.post('/sortjobby', createSortJobsBy)
+    
+//DELETE a sortjobby 
+
+router.delete('/sortjobby/:id', deleteSortJobsBy)
+
+//PATCH UPDATE a sortjobby 
+
+router.patch('/sortjobby/:id', updateSortJobsBy)
+
+//*******************Sory Jobs By END********************* */
+
+
+
+//*******************Automations START********************* */
+
+//GET all automations 
+
+router.get('/automations', getAutomations)
+
+//GET single automations 
+
+router.get('/automations/:id', getAutomation)
+
+//POST a new automations
+
+router.post('/automations', createAutomation)
+    
+//DELETE a sortjobby 
+
+router.delete('/automations/:id', deleteAutomation)
+
+//PATCH UPDATE a sortjobby 
+
+router.patch('/automations/:id', updateAutomation)
+
+//*******************Sory Jobs By END********************* */
 
 
 module.exports = router
