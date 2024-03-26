@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 
-
-
 const stageSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -14,10 +12,12 @@ const stageSchema = new mongoose.Schema({
     type: Array,
     type: mongoose.Schema.Types.ObjectId, ref: 'Automations',
   }],
-  automove:{
-    type: Boolean, 
+  automove: {
+    type: Boolean,
   }
 });
+
+
 
 
 const pipelineSchema = new mongoose.Schema(
@@ -25,24 +25,25 @@ const pipelineSchema = new mongoose.Schema(
     pipelineName: {
       type: String,
       required: [true, "pipelineName is required"],
-     },
+    },
 
-     availableto: [{
+    availableto: [{
       type: Array,
       type: mongoose.Schema.Types.ObjectId, ref: 'user',
       required: [true, 'Available to are required'],
-     }],
+    }],
 
-     sortjobsby: {
-  
+    sortjobsby: {
       type: mongoose.Schema.Types.ObjectId, ref: 'SortJobsBy',
-    
-     
-     },
+    },
+
+    defaultjobtemplate: {
+      type: mongoose.Schema.Types.ObjectId, ref: 'JobTemplate',
+    },
 
     accountId: {
-     type: Boolean,
-     default: false, // Provide a default value if needed
+      type: Boolean,
+      default: false, // Provide a default value if needed
     },
 
     description: {
